@@ -1,0 +1,1371 @@
+<!--
+  Container Arrival Tracker v1
+  Built by Eshcol · Build. Model. Deliver.
+  https://buildmodeldeliver.com
+
+  GitHub: https://github.com/wutesta0101-hue/container-arrival-tracker
+  License: MIT
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Container Arrival Tracker | Eshcol · Build. Model. Deliver.</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --provence: #7B9BC8;
+    --baby-blue: #C5D8ED;
+    --provence-dark: #5A7DAD;
+    --provence-deeper: #3D5F8A;
+    --baby-light: #E8F1F9;
+    --white: #FFFFFF;
+    --ink: #1A2332;
+    --ink-mid: #3D5068;
+    --ink-light: #6B7F96;
+    --ink-dim: #9BADBF;
+    --surface: #F4F8FC;
+    --border: #D0E0EE;
+    --border-strong: #A8C0D8;
+    --success: #4A8C6F;
+    --danger: #9B4A4A;
+    --rule: 1px solid var(--border);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--provence-deeper);
+    color: var(--white);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    border-bottom: 3px solid var(--provence);
+  }
+
+  .site-header h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .site-header .subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--baby-blue);
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .gs-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--baby-blue);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .gs-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-dim);
+    transition: background 0.3s;
+  }
+
+  .gs-status.connected .dot { background: #6FCF97; }
+
+  /* ── LAYOUT ── */
+  .app-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  /* ── PANEL ── */
+  .panel {
+    background: var(--white);
+    border: var(--rule);
+    border-top: 3px solid var(--provence);
+  }
+
+  .panel-header {
+    padding: 1rem 1.25rem;
+    border-bottom: var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+  }
+
+  .panel-body { padding: 1.25rem; }
+
+  /* ── CONFIG PANEL ── */
+  .config-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: var(--rule);
+  }
+  .config-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+  .config-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .config-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: var(--rule);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .config-input:focus { border-color: var(--provence); }
+
+  .config-hint {
+    font-size: 0.7rem;
+    color: var(--ink-dim);
+    margin-top: 0.35rem;
+    line-height: 1.4;
+  }
+
+  /* ── FORM ── */
+  .form-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+
+  .field-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .field-label .req { color: var(--provence); margin-left: 2px; }
+
+  .field input[type="text"],
+  .field input[type="date"],
+  .field input[type="number"],
+  .field select {
+    padding: 0.5rem 0.75rem;
+    border: var(--rule);
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+  }
+
+  .field input:focus,
+  .field select:focus { border-color: var(--provence); background: var(--baby-light); }
+
+  /* ── FILE UPLOAD ── */
+  .upload-area {
+    border: 1px dashed var(--border-strong);
+    padding: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+  }
+
+  .upload-area:hover { background: var(--baby-light); border-color: var(--provence); }
+
+  .upload-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+
+  .upload-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-light);
+    pointer-events: none;
+  }
+
+  .upload-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--provence-dark);
+    margin-top: 0.25rem;
+    word-break: break-all;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+  }
+
+  .section-divider span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.25rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary {
+    background: var(--provence-deeper);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--provence-dark); }
+
+  .btn-secondary {
+    background: var(--white);
+    color: var(--ink-mid);
+    border: var(--rule);
+  }
+  .btn-secondary:hover { background: var(--baby-light); border-color: var(--provence); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.65rem;
+  }
+  .btn-danger:hover { background: #F9EDED; }
+
+  .btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: var(--rule);
+    margin-top: 0.5rem;
+  }
+
+  /* ── SEARCH BAR ── */
+  .search-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: var(--rule);
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+  }
+
+  .search-input:focus { border-color: var(--provence); }
+
+  .search-select {
+    padding: 0.5rem 0.75rem;
+    border: var(--rule);
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  thead tr {
+    background: var(--provence-deeper);
+    color: var(--white);
+  }
+
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: var(--rule);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: var(--baby-light); }
+
+  tbody td {
+    padding: 0.6rem 0.75rem;
+    color: var(--ink-mid);
+    vertical-align: middle;
+  }
+
+  tbody td:first-child { color: var(--ink); font-weight: 500; }
+
+  .mono { font-family: 'DM Mono', monospace; font-size: 0.72rem; }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    background: var(--baby-light);
+    color: var(--provence-deeper);
+    border: 1px solid var(--border);
+  }
+
+  .file-link {
+    color: var(--provence-dark);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .file-link:hover { color: var(--provence-deeper); border-color: var(--provence); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--ink-dim);
+  }
+
+  .empty-state p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--provence-deeper);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.25s;
+    pointer-events: none;
+    z-index: 999;
+    border-left: 3px solid var(--provence);
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--danger); border-color: #C47070; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 1.5rem;
+    border: var(--rule);
+    background: var(--white);
+  }
+
+  .stat-item {
+    padding: 0.75rem 1rem;
+    border-right: var(--rule);
+    text-align: center;
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-value {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.5rem;
+    color: var(--provence-deeper);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 0.25rem;
+  }
+
+  /* ── RECORD DETAIL ── */
+  .record-detail {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 35, 50, 0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .record-detail.open { display: flex; }
+
+  .detail-card {
+    background: var(--white);
+    width: 560px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-top: 3px solid var(--provence);
+  }
+
+  .detail-header {
+    padding: 1rem 1.25rem;
+    border-bottom: var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--white);
+  }
+
+  .detail-body { padding: 1.25rem; }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .detail-field { display: flex; flex-direction: column; gap: 0.2rem; }
+
+  .detail-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .detail-val {
+    font-size: 0.85rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--ink-light);
+    line-height: 1;
+    padding: 0.2rem;
+  }
+
+  .close-btn:hover { color: var(--ink); }
+
+  /* ── PHOTO PREVIEW ── */
+  .photo-thumb {
+    width: 48px;
+    height: 36px;
+    object-fit: cover;
+    border: var(--rule);
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 900px) {
+    .app-body { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: 2fr 2fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div>
+    <h1>Container Arrival Tracker</h1>
+    <div class="subtitle">Warehouse / Customs / Procurement — Shared Record System</div>
+  </div>
+  <div class="header-right">
+    <div class="gs-status" id="gsStatus">
+      <span class="dot"></span>
+      <span id="gsStatusText">Not connected</span>
+    </div>
+  </div>
+</header>
+
+<div class="app-body">
+
+  <!-- LEFT: CONFIG + FORM -->
+  <div>
+
+    <!-- Google Sheets Config -->
+    <div class="panel" style="margin-bottom:1.5rem;">
+      <div class="panel-header">
+        <span class="panel-title">Google Sheets Config</span>
+        <button class="btn btn-secondary btn-sm" onclick="testConnection()">Test</button>
+      </div>
+      <div class="panel-body">
+        <div class="config-section">
+          <label class="config-label">Spreadsheet ID</label>
+          <input class="config-input" id="sheetId" type="text" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+          <div class="config-hint">From your Google Sheet URL:<br>docs.google.com/spreadsheets/d/<strong>[ID]</strong>/edit</div>
+        </div>
+        <div class="config-section">
+          <label class="config-label">API Key</label>
+          <input class="config-input" id="apiKey" type="text" placeholder="AIza...">
+          <div class="config-hint">Google Cloud Console → APIs → Sheets API → Credentials</div>
+        </div>
+        <div class="config-section">
+          <label class="config-label">Sheet Name</label>
+          <input class="config-input" id="sheetName" type="text" value="Records">
+          <div class="config-hint">The tab name in your spreadsheet</div>
+        </div>
+        <div class="config-section">
+          <label class="config-label">Apps Script URL</label>
+          <input class="config-input" id="scriptUrl" type="text" placeholder="https://script.google.com/macros/s/...">
+          <div class="config-hint">Required for write access (save / edit / delete).<br>Extensions → Apps Script → Deploy → Web App URL</div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="saveConfig()">Save Config</button>
+      </div>
+    </div>
+
+
+    <!-- Local Excel File -->
+    <div class="panel" style="margin-bottom:1.5rem;">
+      <div class="panel-header">
+        <span class="panel-title">Local Excel File</span>
+        <span class="panel-title" id="fileStatus" style="color:var(--ink-dim)">No file selected</span>
+      </div>
+      <div class="panel-body">
+        <div class="config-hint" style="margin-bottom:0.75rem;">Chrome / Edge only. Select an existing .xlsx file or create a new one. All changes are written back automatically.</div>
+        <div style="display:flex;gap:0.75rem;">
+          <button class="btn btn-secondary" style="flex:1" onclick="selectLocalFile()">Select Excel File</button>
+          <button class="btn btn-secondary" style="flex:1" onclick="createLocalFile()">Create New File</button>
+        </div>
+      </div>
+    </div>
+    <!-- Entry Form -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title" id="formTitle">New Record</span>
+        <button class="btn btn-secondary btn-sm" onclick="resetForm()">Clear</button>
+      </div>
+      <div class="panel-body">
+        <div class="form-grid">
+
+          <div class="section-divider"><span>Cargo Info</span></div>
+
+          <div class="field">
+            <label class="field-label">Cargo Name <span class="req">*</span></label>
+            <input type="text" id="f_cargo" placeholder="e.g. Raw Material A">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Project Code</label>
+            <input type="text" id="f_project" placeholder="e.g. PRJ-2026-01">
+          </div>
+
+          <div class="section-divider"><span>Documents</span></div>
+
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label">Invoice No. <span class="req">*</span></label>
+              <input type="text" id="f_invoiceNo" placeholder="INV-XXXXX">
+            </div>
+            <div class="field">
+              <label class="field-label">Packing List No.</label>
+              <input type="text" id="f_plNo" placeholder="PL-XXXXX">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label">Invoice File</label>
+              <div class="upload-area" id="invoiceArea">
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls" onchange="handleFile(this,'invoice')">
+                <div class="upload-label">Click to upload</div>
+                <div class="upload-name" id="invoiceName"></div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Packing List File</label>
+              <div class="upload-area" id="plArea">
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls" onchange="handleFile(this,'pl')">
+                <div class="upload-label">Click to upload</div>
+                <div class="upload-name" id="plName"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Schedule</span></div>
+
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label">Customs Date</label>
+              <input type="date" id="f_customsDate">
+            </div>
+            <div class="field">
+              <label class="field-label">Arrival Date <span class="req">*</span></label>
+              <input type="date" id="f_arrivalDate">
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Container</span></div>
+
+          <div class="form-row">
+            <div class="field">
+              <label class="field-label">Yard Zone</label>
+              <input type="text" id="f_zone" placeholder="e.g. Zone A">
+            </div>
+            <div class="field">
+              <label class="field-label">Container No. <span class="req">*</span></label>
+              <input type="text" id="f_containerNo" placeholder="ABCU1234567">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Interior Photo (after unloading)</label>
+            <div class="upload-area" id="photoArea">
+              <input type="file" accept="image/*" onchange="handleFile(this,'photo')">
+              <div class="upload-label">Click to upload photo</div>
+              <div class="upload-name" id="photoName"></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="submitRecord()" style="flex:1">Save Record</button>
+            <button class="btn btn-secondary" onclick="exportExcel()">Export Excel</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: RECORDS TABLE -->
+  <div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total Records</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statThisMonth">0</div>
+        <div class="stat-label">This Month</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statPending">0</div>
+        <div class="stat-label">Pending Arrival</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statArrived">0</div>
+        <div class="stat-label">Arrived</div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <input class="search-input" id="searchInput" type="text" placeholder="Search by cargo name, container no., invoice no., project code..." oninput="renderTable()">
+      <select class="search-select" id="searchField" onchange="renderTable()">
+        <option value="all">All Fields</option>
+        <option value="cargo">Cargo Name</option>
+        <option value="container">Container No.</option>
+        <option value="invoice">Invoice No.</option>
+        <option value="project">Project Code</option>
+      </select>
+      <button class="btn btn-secondary btn-sm" onclick="loadFromSheets()">Refresh</button>
+    </div>
+
+    <!-- Table -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Records</span>
+        <span class="panel-title" id="recordCount" style="color:var(--ink-dim)"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cargo Name</th>
+              <th>Project</th>
+              <th>Container No.</th>
+              <th>Invoice No.</th>
+              <th>Arrival Date</th>
+              <th>Zone</th>
+              <th>INV File</th>
+              <th>PKG File</th>
+              <th>Container Pic</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <p>No records found.</p>
+          <p style="margin-top:0.5rem;color:var(--ink-dim);font-size:0.65rem;">Add a new record using the form on the left.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RECORD DETAIL MODAL -->
+<div class="record-detail" id="detailModal">
+  <div class="detail-card">
+    <div class="detail-header">
+      <span class="panel-title">Record Detail</span>
+      <button class="close-btn" onclick="closeDetail()">x</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-grid" id="detailContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ STATE ══
+let records = [];
+let editingId = null;
+let fileCache = {};
+let config = {};
+
+// ══ INIT ══
+window.onload = () => {
+  config = JSON.parse(localStorage.getItem('cat_config') || '{}');
+  if (config.sheetId) document.getElementById('sheetId').value = config.sheetId;
+  if (config.apiKey) document.getElementById('apiKey').value = config.apiKey;
+  if (config.sheetName) document.getElementById('sheetName').value = config.sheetName;
+  if (config.scriptUrl) document.getElementById('scriptUrl').value = config.scriptUrl;
+
+  const local = localStorage.getItem('cat_records');
+  if (local) records = JSON.parse(local);
+
+  renderTable();
+  updateStats();
+};
+
+// ══ CONFIG ══
+function saveConfig() {
+  config = {
+    sheetId: document.getElementById('sheetId').value.trim(),
+    apiKey: document.getElementById('apiKey').value.trim(),
+    sheetName: document.getElementById('sheetName').value.trim() || 'Records',
+    scriptUrl: document.getElementById('scriptUrl').value.trim()
+  };
+  localStorage.setItem('cat_config', JSON.stringify(config));
+  toast('Config saved.');
+}
+
+async function testConnection() {
+  saveConfig();
+  if (!config.sheetId || !config.apiKey) {
+    toast('Please enter Spreadsheet ID and API Key.', true); return;
+  }
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}?key=${config.apiKey}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      document.getElementById('gsStatus').classList.add('connected');
+      document.getElementById('gsStatusText').textContent = 'Connected';
+      toast('Connection successful.');
+      await loadFromSheets();
+    } else {
+      toast('Connection failed. Check your credentials.', true);
+    }
+  } catch (e) {
+    toast('Connection failed: ' + e.message, true);
+  }
+}
+
+// ══ GOOGLE SHEETS ══
+async function loadFromSheets() {
+  if (!config.sheetId || !config.apiKey) return;
+  try {
+    const range = encodeURIComponent(`${config.sheetName}!A:M`);
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${config.sheetId}/values/${range}?key=${config.apiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.values || data.values.length < 2) return;
+
+    const [header, ...rows] = data.values;
+    records = rows.map((r, i) => ({
+      id: r[0] || String(i),
+      cargo: r[1] || '',
+      project: r[2] || '',
+      invoiceNo: r[3] || '',
+      plNo: r[4] || '',
+      customsDate: r[5] || '',
+      arrivalDate: r[6] || '',
+      zone: r[7] || '',
+      containerNo: r[8] || '',
+      invoiceFile: r[9] || '',
+      plFile: r[10] || '',
+      photo: r[11] || '',
+      createdAt: r[12] || ''
+    }));
+
+    localStorage.setItem('cat_records', JSON.stringify(records));
+    renderTable();
+    updateStats();
+    toast(`Loaded ${records.length} records from Google Sheets.`);
+  } catch (e) {
+    toast('Failed to load from Sheets: ' + e.message, true);
+  }
+}
+
+async function callScript(payload) {
+  if (!config.scriptUrl) return;
+  try {
+    await fetch(config.scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.warn('Apps Script write failed:', e.message);
+  }
+}
+
+async function appendToSheets(record) {
+  await callScript({
+    action: 'append',
+    id: record.id,
+    cargo: record.cargo,
+    project: record.project,
+    invoiceNo: record.invoiceNo,
+    plNo: record.plNo,
+    customsDate: record.customsDate,
+    arrivalDate: record.arrivalDate,
+    zone: record.zone,
+    containerNo: record.containerNo,
+    invoiceFile: record.invoiceFile,
+    plFile: record.plFile,
+    hasPhoto: record.photo ? 'Yes' : 'No',
+    createdAt: record.createdAt
+  });
+}
+
+async function updateInSheets(record) {
+  await callScript({
+    action: 'update',
+    id: record.id,
+    cargo: record.cargo,
+    project: record.project,
+    invoiceNo: record.invoiceNo,
+    plNo: record.plNo,
+    customsDate: record.customsDate,
+    arrivalDate: record.arrivalDate,
+    zone: record.zone,
+    containerNo: record.containerNo,
+    invoiceFile: record.invoiceFile,
+    plFile: record.plFile,
+    hasPhoto: record.photo ? 'Yes' : 'No',
+    createdAt: record.createdAt
+  });
+}
+
+async function deleteFromSheets(id) {
+  await callScript({ action: 'delete', id });
+}
+
+// ══ FILE HANDLING ══
+function handleFile(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const nameMap = { invoice: 'invoiceName', pl: 'plName', photo: 'photoName' };
+  document.getElementById(nameMap[type]).textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = e => { fileCache[type] = { name: file.name, data: e.target.result }; };
+  reader.readAsDataURL(file);
+}
+
+// ══ FORM ══
+function submitRecord() {
+  const cargo = document.getElementById('f_cargo').value.trim();
+  const containerNo = document.getElementById('f_containerNo').value.trim();
+  const invoiceNo = document.getElementById('f_invoiceNo').value.trim();
+  const arrivalDate = document.getElementById('f_arrivalDate').value;
+
+  if (!cargo || !containerNo || !invoiceNo || !arrivalDate) {
+    toast('Required fields: Cargo Name, Invoice No., Container No., Arrival Date.', true);
+    return;
+  }
+
+  const record = {
+    id: editingId || Date.now().toString(),
+    cargo,
+    project: document.getElementById('f_project').value.trim(),
+    invoiceNo,
+    plNo: document.getElementById('f_plNo').value.trim(),
+    customsDate: document.getElementById('f_customsDate').value,
+    arrivalDate,
+    zone: document.getElementById('f_zone').value.trim(),
+    containerNo,
+    invoiceFile: fileCache.invoice ? fileCache.invoice.name : '',
+    plFile: fileCache.pl ? fileCache.pl.name : '',
+    photo: fileCache.photo ? fileCache.photo.data : '',
+    invoiceData: fileCache.invoice ? fileCache.invoice.data : '',
+    plData: fileCache.pl ? fileCache.pl.data : '',
+    createdAt: new Date().toISOString().split('T')[0]
+  };
+
+  if (editingId) {
+    const idx = records.findIndex(r => r.id === editingId);
+    if (idx > -1) records[idx] = record;
+    editingId = null;
+    document.getElementById('formTitle').textContent = 'New Record';
+    updateInSheets(record);
+  } else {
+    records.push(record);
+    appendToSheets(record);
+  }
+
+  localStorage.setItem('cat_records', JSON.stringify(records));
+  writeLocalFile();
+  renderTable();
+  updateStats();
+  resetForm();
+  toast('Record saved.');
+}
+
+function resetForm() {
+  ['f_cargo','f_project','f_invoiceNo','f_plNo','f_customsDate','f_arrivalDate','f_zone','f_containerNo']
+    .forEach(id => document.getElementById(id).value = '');
+  ['invoiceName','plName','photoName'].forEach(id => document.getElementById(id).textContent = '');
+  // Reset file inputs so onchange fires even if the same file is selected again
+  document.querySelectorAll('input[type="file"]').forEach(el => el.value = '');
+  fileCache = {};
+  editingId = null;
+  document.getElementById('formTitle').textContent = 'New Record';
+}
+
+function editRecord(id) {
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+  editingId = id;
+  document.getElementById('formTitle').textContent = 'Edit Record';
+  document.getElementById('f_cargo').value = r.cargo;
+  document.getElementById('f_project').value = r.project;
+  document.getElementById('f_invoiceNo').value = r.invoiceNo;
+  document.getElementById('f_plNo').value = r.plNo;
+  document.getElementById('f_customsDate').value = r.customsDate;
+  document.getElementById('f_arrivalDate').value = r.arrivalDate;
+  document.getElementById('f_zone').value = r.zone;
+  document.getElementById('f_containerNo').value = r.containerNo;
+  // Reset file inputs and fileCache so new uploads work correctly
+  document.querySelectorAll('input[type="file"]').forEach(el => el.value = '');
+  fileCache = {};
+  // Show existing filenames as reference
+  document.getElementById('invoiceName').textContent = r.invoiceFile ? r.invoiceFile + ' (current)' : '';
+  document.getElementById('plName').textContent = r.plFile ? r.plFile + ' (current)' : '';
+  document.getElementById('photoName').textContent = r.photo ? 'Photo attached (current)' : '';
+  // Pre-load existing file data into cache so they are kept if not replaced
+  if (r.invoiceData) fileCache.invoice = { name: r.invoiceFile, data: r.invoiceData };
+  if (r.plData) fileCache.pl = { name: r.plFile, data: r.plData };
+  if (r.photo) fileCache.photo = { name: 'photo', data: r.photo };
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteRecord(id) {
+  if (!confirm('Delete this record?')) return;
+  deleteFromSheets(id);
+  records = records.filter(r => r.id !== id);
+  localStorage.setItem('cat_records', JSON.stringify(records));
+  writeLocalFile();
+  renderTable();
+  updateStats();
+  toast('Record deleted.');
+}
+
+// ══ TABLE ══
+function renderTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const field = document.getElementById('searchField').value;
+
+  let filtered = records.filter(r => {
+    if (!q) return true;
+    if (field === 'cargo') return r.cargo.toLowerCase().includes(q);
+    if (field === 'container') return r.containerNo.toLowerCase().includes(q);
+    if (field === 'invoice') return r.invoiceNo.toLowerCase().includes(q);
+    if (field === 'project') return r.project.toLowerCase().includes(q);
+    return [r.cargo, r.containerNo, r.invoiceNo, r.project, r.plNo]
+      .some(v => v.toLowerCase().includes(q));
+  });
+
+  document.getElementById('recordCount').textContent = `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(r => {
+    const today = new Date().toISOString().split('T')[0];
+    const arrived = r.arrivalDate && r.arrivalDate <= today;
+
+    const invoiceLink = r.invoiceFile
+      ? `<span class="file-link" onclick="downloadFile('${r.id}','invoice')">${r.invoiceFile}</span>`
+      : '-';
+
+    const plLink = r.plFile
+      ? `<span class="file-link" onclick="downloadFile('${r.id}','pl')">${r.plFile}</span>`
+      : '-';
+
+    const photo = r.photo
+      ? `<img src="${r.photo}" class="photo-thumb" onclick="viewPhoto('${r.id}')" title="View photo">`
+      : '-';
+
+    return `<tr>
+      <td onclick="openDetail('${r.id}')" style="cursor:pointer">${r.cargo}</td>
+      <td><span class="mono">${r.project || '-'}</span></td>
+      <td><span class="mono">${r.containerNo}</span></td>
+      <td><span class="mono">${r.invoiceNo}</span></td>
+      <td>
+        <span class="badge" style="${arrived ? 'background:var(--baby-light);color:var(--success);border-color:#A8D0BC' : ''}">${r.arrivalDate || '-'}</span>
+      </td>
+      <td>${r.zone || '-'}</td>
+      <td>${invoiceLink}</td>
+      <td>${plLink}</td>
+      <td>${photo}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-secondary btn-sm" onclick="editRecord('${r.id}')">Edit</button>
+        <button class="btn btn-danger" onclick="deleteRecord('${r.id}')">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateStats() {
+  const today = new Date().toISOString().split('T')[0];
+  const thisMonth = today.slice(0, 7);
+
+  document.getElementById('statTotal').textContent = records.length;
+  document.getElementById('statThisMonth').textContent =
+    records.filter(r => r.arrivalDate && r.arrivalDate.startsWith(thisMonth)).length;
+  document.getElementById('statPending').textContent =
+    records.filter(r => !r.arrivalDate || r.arrivalDate > today).length;
+  document.getElementById('statArrived').textContent =
+    records.filter(r => r.arrivalDate && r.arrivalDate <= today).length;
+}
+
+// ══ DETAIL MODAL ══
+function openDetail(id) {
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+
+  const fields = [
+    ['Cargo Name', r.cargo],
+    ['Project Code', r.project || '-'],
+    ['Container No.', r.containerNo],
+    ['Invoice No.', r.invoiceNo],
+    ['Packing List No.', r.plNo || '-'],
+    ['Customs Date', r.customsDate || '-'],
+    ['Arrival Date', r.arrivalDate || '-'],
+    ['Yard Zone', r.zone || '-'],
+    ['Invoice File', r.invoiceFile || '-'],
+    ['Packing List File', r.plFile || '-'],
+    ['Created', r.createdAt || '-'],
+  ];
+
+  document.getElementById('detailContent').innerHTML =
+    fields.map(([k, v]) => `
+      <div class="detail-field">
+        <span class="detail-key">${k}</span>
+        <span class="detail-val mono">${v}</span>
+      </div>
+    `).join('') +
+    (r.photo ? `<div class="detail-field" style="grid-column:1/-1">
+      <span class="detail-key">Interior Photo</span>
+      <img src="${r.photo}" style="max-width:100%;margin-top:0.5rem;border:var(--rule)">
+    </div>` : '');
+
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+function viewPhoto(id) {
+  openDetail(id);
+}
+
+function downloadFile(id, type) {
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+  const data = type === 'invoice' ? r.invoiceData : r.plData;
+  const name = type === 'invoice' ? r.invoiceFile : r.plFile;
+  if (!data) { toast('File not available (stored externally).', true); return; }
+  const a = document.createElement('a');
+  a.href = data; a.download = name; a.click();
+}
+
+// ══ EXPORT EXCEL ══
+function exportExcel() {
+  if (records.length === 0) { toast('No records to export.', true); return; }
+
+  const headers = [
+    'ID','Cargo Name','Project Code','Invoice No.','Packing List No.',
+    'Customs Date','Arrival Date','Yard Zone','Container No.',
+    'Invoice File','Packing List File','Has Photo','Created At'
+  ];
+
+  const rows = records.map(r => [
+    r.id, r.cargo, r.project, r.invoiceNo, r.plNo,
+    r.customsDate, r.arrivalDate, r.zone, r.containerNo,
+    r.invoiceFile, r.plFile, r.photo ? 'Yes' : 'No', r.createdAt
+  ]);
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map(() => ({ wch: 20 }));
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Records');
+
+  const date = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(wb, `container-arrival-records-${date}.xlsx`);
+  toast('Excel exported.');
+}
+
+// ══ TOAST ══
+function toast(msg, isError = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Close modal on backdrop click
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDetail();
+});
+
+// ══ FILE SYSTEM ACCESS API ══
+let localFileHandle = null;
+
+function isFileSystemSupported() {
+  return 'showOpenFilePicker' in window;
+}
+
+async function selectLocalFile() {
+  if (!isFileSystemSupported()) {
+    toast('File System API is only supported in Chrome and Edge.', true);
+    return;
+  }
+  try {
+    const [handle] = await window.showOpenFilePicker({
+      types: [{ description: 'Excel Files', accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] } }],
+      multiple: false
+    });
+    localFileHandle = handle;
+    document.getElementById('fileStatus').textContent = handle.name;
+    document.getElementById('fileStatus').style.color = 'var(--success)';
+    await readLocalFile();
+    toast('File connected: ' + handle.name);
+  } catch (e) {
+    if (e.name !== 'AbortError') toast('Failed to open file: ' + e.message, true);
+  }
+}
+
+async function createLocalFile() {
+  if (!isFileSystemSupported()) {
+    toast('File System API is only supported in Chrome and Edge.', true);
+    return;
+  }
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: 'container-arrival-records.xlsx',
+      types: [{ description: 'Excel Files', accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] } }]
+    });
+    localFileHandle = handle;
+    document.getElementById('fileStatus').textContent = handle.name;
+    document.getElementById('fileStatus').style.color = 'var(--success)';
+    await writeLocalFile();
+    toast('New file created: ' + handle.name);
+  } catch (e) {
+    if (e.name !== 'AbortError') toast('Failed to create file: ' + e.message, true);
+  }
+}
+
+async function readLocalFile() {
+  if (!localFileHandle) return;
+  try {
+    const file = await localFileHandle.getFile();
+    const buffer = await file.arrayBuffer();
+    const wb = XLSX.read(buffer, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    if (rows.length < 2) return;
+    const [, ...data] = rows;
+    records = data.filter(r => r[0]).map(r => ({
+      id: String(r[0] || ''),
+      cargo: r[1] || '',
+      project: r[2] || '',
+      invoiceNo: r[3] || '',
+      plNo: r[4] || '',
+      customsDate: r[5] || '',
+      arrivalDate: r[6] || '',
+      zone: r[7] || '',
+      containerNo: r[8] || '',
+      invoiceFile: r[9] || '',
+      plFile: r[10] || '',
+      photo: '',
+      createdAt: r[12] || ''
+    }));
+    localStorage.setItem('cat_records', JSON.stringify(records));
+    renderTable();
+    updateStats();
+  } catch (e) {
+    toast('Failed to read file: ' + e.message, true);
+  }
+}
+
+async function writeLocalFile() {
+  if (!localFileHandle) return;
+  try {
+    const headers = [
+      'ID', 'Cargo Name', 'Project Code', 'Invoice No.', 'Packing List No.',
+      'Customs Date', 'Arrival Date', 'Yard Zone', 'Container No.',
+      'Invoice File', 'Packing List File', 'Has Photo', 'Created At'
+    ];
+    const rows = records.map(r => [
+      r.id, r.cargo, r.project, r.invoiceNo, r.plNo,
+      r.customsDate, r.arrivalDate, r.zone, r.containerNo,
+      r.invoiceFile, r.plFile, r.photo ? 'Yes' : 'No', r.createdAt
+    ]);
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    ws['!cols'] = headers.map(() => ({ wch: 20 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Records');
+    const wbArray = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const writable = await localFileHandle.createWritable();
+    await writable.write(new Blob([wbArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    await writable.close();
+  } catch (e) {
+    toast('Failed to write file: ' + e.message, true);
+  }
+}
+</script>
+
+<footer style="text-align:center;padding:1.5rem 2rem;border-top:1px solid var(--border);margin-top:2rem;">
+  <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--ink-dim);">
+    Built by <a href="https://buildmodeldeliver.com" target="_blank" rel="noopener" style="color:var(--provence);text-decoration:none;border-bottom:1px solid var(--border);">Eshcol</a>
+    &nbsp;·&nbsp; Build. Model. Deliver.
+    &nbsp;·&nbsp; MIT License
+  </span>
+</footer>
+
+</body>
+</html>
