@@ -237,7 +237,7 @@ Upload the HTML file as a static asset. See [Cloudflare Workers documentation](h
 ```
 container-arrival-tracker/
 |
-|-- v1-google-sheets/
+|-- sheets_v1/
 |   |-- container-arrival-tracker-v1.html    Main application
 |   `-- apps-script.gs                       Google Apps Script code
 |
