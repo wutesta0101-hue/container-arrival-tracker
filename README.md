@@ -2,7 +2,7 @@
 
 > A lightweight, zero-infrastructure tool for warehouse, customs, and procurement teams to track container arrivals and share documents in real time.
 
-**Built by Testa Wu — Eshcol Studio | Build. Model. Deliver.**
+Built by Testa Wu — Eshcol Studio | Build. Model. Deliver.
 
 ---
 
@@ -27,7 +27,7 @@ This tool closes that gap.
 
 A single HTML file that three departments share. When procurement uploads the invoice and packing list, and customs logs the arrival date, the warehouse sees everything — in one place, in real time.
 
-**No server required for v1. No installation. No IT department.**
+No server required for v1. No installation. No IT department.
 
 ---
 
@@ -77,12 +77,12 @@ Requires Chrome or Edge.
 
 1. Download `container-arrival-tracker-v1.html`
 2. Open it in Chrome or Edge
-3. In the **Local Excel File** panel, click **Create New File**
+3. In the Local Excel File panel, click Create New File
 4. Choose where to save the `.xlsx` file (e.g. a shared network folder)
 5. Start adding records — every change is written to the Excel file automatically
 
-**Next time you open the tool:**
-1. Click **Select Excel File**
+Next time you open the tool:
+1. Click Select Excel File
 2. Choose the same `.xlsx` file
 3. All records load automatically
 
@@ -112,15 +112,15 @@ Copy the `SPREADSHEET_ID` part.
 
 1. Go to [console.cloud.google.com](https://console.cloud.google.com)
 2. Create a new project (or use an existing one)
-3. Enable **Google Sheets API**
-4. Go to **Credentials** → **Create Credentials** → **API Key**
-5. Restrict the key to **Google Sheets API** only (recommended)
+3. Enable Google Sheets API
+4. Go to Credentials → Create Credentials → API Key
+5. Restrict the key to Google Sheets API only (recommended)
 
 ### Step 4 — Enable write access via Apps Script
 
 API Keys allow read-only access. For write access (save / edit / delete), set up the Apps Script Web App below.
 
-1. In your Google Sheet, go to **Extensions → Apps Script**
+1. In your Google Sheet, go to Extensions → Apps Script
 2. Paste this code:
 
 ```javascript
@@ -192,32 +192,32 @@ function doGet(e) {
 }
 ```
 
-3. Click **Deploy → New Deployment**
-4. Type: **Web App**
-5. Execute as: **Me**
-6. Who has access: **Anyone**
-7. Click **Deploy** and copy the **Web App URL**
+3. Click Deploy → New Deployment
+4. Type: Web App
+5. Execute as: Me
+6. Who has access: Anyone
+7. Click Deploy and copy the Web App URL
 
 ### Step 5 — Configure the tracker
 
 Open `container-arrival-tracker-v1.html` in your browser.
 
-In the **Google Sheets Config** panel:
-- Paste your **Spreadsheet ID**
-- Paste your **API Key**
-- Paste your **Apps Script Web App URL**
-- Enter your **Sheet Name** (default: `Records`)
-- Click **Test** to verify the connection
+In the Google Sheets Config panel:
+- Paste your Spreadsheet ID
+- Paste your API Key
+- Paste your Apps Script Web App URL
+- Enter your Sheet Name (default: `Records`)
+- Click Test to verify the connection
 
 ### Step 6 — Share with your team
 
-**Option A — Company file server / NAS**
+Option A — Company file server / NAS
 Place the HTML file in a shared network folder. All users open it from the same location.
 
-**Option B — GitHub Pages (free)**
+Option B — GitHub Pages (free)
 Fork this repository, enable GitHub Pages, and share the URL.
 
-**Option C — Cloudflare Workers (free)**
+Option C — Cloudflare Workers (free)
 Upload the HTML file as a static asset. See [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/).
 
 ---
@@ -347,7 +347,7 @@ MIT License — free to use, modify, and distribute.
 
 ## Author
 
-**Testa Wu**
+Testa Wu
 Eshcol Studio — Build. Model. Deliver.
 
 [buildmodeldeliver.com](https://buildmodeldeliver.com) · [LinkedIn](https://linkedin.com/in/testa-wu) · [Medium](https://medium.com/@testa-wu)
