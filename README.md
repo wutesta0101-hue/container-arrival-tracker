@@ -350,6 +350,6 @@ MIT License — free to use, modify, and distribute.
 Testa Wu
 Eshcol Studio — Build. Model. Deliver.
 
-[buildmodeldeliver.com](https://buildmodeldeliver.com) · [LinkedIn](https://linkedin.com/in/testa-wu) · [Medium](https://medium.com/@testa-wu)
+[Medium](https://medium.com/@testa-wu)
 
 > "The UI is not a report — it is a decision surface."
