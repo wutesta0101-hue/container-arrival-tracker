@@ -239,17 +239,6 @@ container-arrival-tracker/
 |   |-- container-arrival-tracker-v1.html    Main application
 |   `-- apps-script.gs                       Google Apps Script code
 |
-|-- v2-backend/                              Coming soon
-|   |-- frontend/
-|   |   `-- index.html
-|   |-- backend/
-|   |   |-- main.py                          FastAPI
-|   |   |-- database.py                      SQLite / PostgreSQL
-|   |   |-- models.py
-|   |   `-- requirements.txt
-|   |-- docker-compose.yml
-|   `-- README.md
-|
 `-- README.md
 ```
 
@@ -283,7 +272,7 @@ container-arrival-tracker/
 - Excel export
 - Stats dashboard
 
-### v2 — Backend (planned)
+### v2 — Backend
 - FastAPI + SQLite / PostgreSQL
 - Multi-user authentication
 - Role-based access (procurement / customs / warehouse)
@@ -292,7 +281,7 @@ container-arrival-tracker/
 - Docker Compose for self-hosted deployment
 - Audit log (who changed what, when)
 
-### v3 — Notifications (future)
+### v3 — Notifications
 - Email / LINE notification when arrival date is approaching
 - Slack / Teams webhook integration
 - Mobile-optimized view
@@ -311,6 +300,8 @@ The standard response in traditional industries is: that is not my department. T
 
 A shared record system with clear ownership at each step eliminates this entirely.
 
+Written up in more detail: [How I Built a Zero-Infrastructure Tool to Fix a Cross-Department Information Problem](https://medium.com/@wutesta0101/how-i-built-a-zero-infrastructure-tool-to-fix-a-cross-department-information-problem-8820a4c7f095)
+
 ---
 
 ## Tech Stack
@@ -323,9 +314,7 @@ A shared record system with clear ownership at each step eliminates this entirel
 | Database (v1) | Google Sheets via Sheets API |
 | Write access (v1) | Google Apps Script Web App |
 | Local fallback | localStorage |
-| Backend (v2) | Python + FastAPI |
-| Database (v2) | SQLite (dev) / PostgreSQL (prod) |
-| Deployment | Cloudflare Workers / GitHub Pages / Docker |
+| Deployment | Cloudflare Workers / GitHub Pages / NAS |
 
 ---
 
@@ -345,8 +334,4 @@ MIT License — free to use, modify, and distribute.
 
 ## Author
 
-Testa Wu
-
-[Medium](https://medium.com/@testa-wu)
-
-
+**Testa Wu** — [GitHub](https://github.com/wutesta0101-hue) · [Medium](https://medium.com/@wutesta0101)
