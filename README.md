@@ -2,8 +2,6 @@
 
 > A lightweight, zero-infrastructure tool for warehouse, customs, and procurement teams to track container arrivals and share documents in real time.
 
-Built by Testa Wu — Eshcol Studio | Build. Model. Deliver.
-
 ---
 
 ## The Problem
@@ -348,7 +346,6 @@ MIT License — free to use, modify, and distribute.
 ## Author
 
 Testa Wu
-Eshcol Studio — Build. Model. Deliver.
 
 [Medium](https://medium.com/@testa-wu)
 
