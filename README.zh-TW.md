@@ -16,12 +16,13 @@
 倉庫    → 不知道櫃什麼時候到
           也沒有單據可以核對貨物
 ```
+線上展示 →https://wutesta0101-hue.github.io/container-arrival-tracker/
 
 結果是：倉庫人員毫無準備地到場，貨物核對全靠人工且容易出錯，延誤累積成滯箱費。
 
 這個工具就是要補上這個斷點。
 
-線上展示 →https://wutesta0101-hue.github.io/container-arrival-tracker/
+
 ---
 
 ## 這個工具做什麼
