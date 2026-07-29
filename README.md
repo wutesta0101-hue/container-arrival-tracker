@@ -326,12 +326,4 @@ If you are using this in production and have feedback — especially from wareho
 
 ---
 
-## License
-
-MIT License — free to use, modify, and distribute.
-
----
-
-## Author
-
-**Testa Wu** — [GitHub](https://github.com/wutesta0101-hue) · [Medium](https://medium.com/@wutesta0101)
+**License** — © 2026 Testa Wu. All rights reserved. Portfolio use only.
