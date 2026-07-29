@@ -4,8 +4,7 @@
 
 > A lightweight, zero-infrastructure tool for warehouse, customs, and procurement teams to track container arrivals and share documents in real time.
 
-Live Demo → https://wutesta0101-hue.github.io/container-arrival-tracker/
-)
+Live Demo → wutesta0101-hue.github.io/container-arrival-tracker
 ---
 
 ## The Problem
