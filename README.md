@@ -4,6 +4,7 @@
 
 > A lightweight, zero-infrastructure tool for warehouse, customs, and procurement teams to track container arrivals and share documents in real time.
 
+**Live Demo → [wutesta0101-hue.github.io/container-arrival-tracker](https://wutesta0101-hue.github.io/container-arrival-tracker/)**
 ---
 
 ## The Problem
@@ -32,6 +33,13 @@ No server required for v1. No installation. No IT department.
 
 ---
 
+## Cross-Department Information Flow
+
+![Cross-department information flow](docs/flow-en.png)
+
+Documents flow from the supplier to procurement. Timing flows from the carrier through the customs broker. The two converge at the shared record — the first point at which the warehouse holds both *when it arrives* and *what to check it against*.
+
+---
 ## Features
 
 | Feature | Description |
