@@ -332,14 +332,6 @@ container-arrival-tracker/
 
 ---
 
-## 授權
+**授權** — © 2026 Testa Wu。保留所有權利。僅供作品展示用途。
 
-© 2026 Testa Wu。保留所有權利。僅供作品展示與示範用途。
 
----
-
-## 作者
-
-**Testa Wu** — [GitHub](https://github.com/wutesta0101-hue) · [Medium](https://medium.com/@wutesta0101)
-
-> 「介面不是報表，是決策面。」
