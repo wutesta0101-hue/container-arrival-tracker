@@ -325,6 +325,13 @@ This is a portfolio project, not an open-source library — but operational feed
 If you work in warehouse, customs, or procurement and something here does not match how your team actually operates, please open an issue. Real operations feedback shapes the roadmap.
 
 ---
+## Related
+ 
+**[3D Container Packing System](https://github.com/wutesta0101-hue/container-packing)** — Models the physical constraints of forklift operation and cargo stacking inside a shipping container.
+
+**[Dense mobile rack Picking Sequence Optimizer](https://github.com/wutesta0101-hue/emr-scheduling)** — Dense mobile rack Picking **3D visualization**.
+
+---
 
 **License** — © 2026 Testa Wu. All rights reserved. Portfolio use only.
 
