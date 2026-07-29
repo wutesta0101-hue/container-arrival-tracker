@@ -1,5 +1,7 @@
 # Container Arrival Tracker
 
+*[中文版本](README.zh-TW.md)*
+
 > A lightweight, zero-infrastructure tool for warehouse, customs, and procurement teams to track container arrivals and share documents in real time.
 
 ---
@@ -213,7 +215,7 @@ Option A — Company file server / NAS
 Place the HTML file in a shared network folder. All users open it from the same location.
 
 Option B — GitHub Pages (free)
-Fork this repository, enable GitHub Pages, and share the URL.
+Host the HTML file on GitHub Pages and share the URL.
 
 Option C — Cloudflare Workers (free)
 Upload the HTML file as a static asset. See [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/).
@@ -318,12 +320,14 @@ Written up in more detail: [How I Built a Zero-Infrastructure Tool to Fix a Cros
 
 ---
 
-## Contributing
+## Feedback
 
-Issues and pull requests are welcome.
+This is a portfolio project, not an open-source library — but operational feedback is genuinely welcome.
 
-If you are using this in production and have feedback — especially from warehouse, customs, or procurement teams — please open an issue. Real operations feedback shapes the roadmap.
+If you work in warehouse, customs, or procurement and something here does not match how your team actually operates, please open an issue. Real operations feedback shapes the roadmap.
 
 ---
 
 **License** — © 2026 Testa Wu. All rights reserved. Portfolio use only.
+
+
