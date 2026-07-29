@@ -330,6 +330,13 @@ container-arrival-tracker/
 
 
 ---
+## 相關專案
+
+**[三維貨櫃裝箱系統](https://github.com/wutesta0101-hue/container-packing)** — 模擬堆高機物於貨櫃內裝疊貨物的**物理行為**。
+
+**[電動移動貨架 揀貨序列最佳化](https://github.com/wutesta0101-hue/emr-scheduling)** — 密集式移動貨架的揀貨**3D可視化**。
+
+---
 
 **授權** — © 2026 Testa Wu。保留所有權利。僅供作品展示用途。
 
