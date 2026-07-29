@@ -4,7 +4,6 @@
 
 > A lightweight, zero-infrastructure tool for warehouse, customs, and procurement teams to track container arrivals and share documents in real time.
 
-# Live Demo → [wutesta0101-hue.github.io/container-arrival-tracker](https://wutesta0101-hue.github.io/container-arrival-tracker/)
 ---
 
 ## The Problem
@@ -17,6 +16,7 @@ Customs        → knows the customs clearance date
 Warehouse      → has no idea when the container arrives
                  and no documents to verify cargo
 ```
+Live Demo → [wutesta0101-hue.github.io/container-arrival-tracker](https://wutesta0101-hue.github.io/container-arrival-tracker/)
 
 The result: warehouse staff arrive unprepared. Cargo verification is manual and error-prone. Demurrage fees accumulate from delays.
 
